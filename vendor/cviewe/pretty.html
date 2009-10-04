@@ -1,0 +1,83 @@
+<html>
+<head>
+<link href="../../vendor/cviewe/prettify/src/prettify.css" type="text/css" rel="stylesheet" />
+<script src="/_utils/script/jquery.js?1.2.6"></script>
+<script src="/_utils/script/json2.js"></script>
+<script src="../../vendor/cviewe/prettify/src/prettify.js"></script>
+<script type="text/javascript">
+var getQueryVars = function(){
+    var chunks = document.location.search.substring(1).split('&');
+    var qvars = {};
+    for (var lop=0;lop<chunks.length;lop+=1){
+        var split = chunks[lop].split('=');
+        qvars[split[0]] = split[1];
+    }
+    return qvars;
+}
+var fixupInputs = function(){
+    // Disable unused keys to prevent them from getting in the query string
+    $('[type=text][value=]').attr('disabled', true);
+    // Keys need to be submitted as JSON strings
+    $('[type=text][value!=][name$=key]').attr('value',function(){
+        return JSON.stringify(this.value);});
+}
+</script>
+</head>
+<body onload="prettyPrint()">
+<form onSubmit="fixupInputs()">
+<fieldset>
+<legend>Misc</legend>
+<label><input type='checkbox' name='reduce' value='false'>Do not reduce</label>
+<label><input type='checkbox' name='include_docs' value='true'>Include Docs</label>
+<label><input type='checkbox' name='stale' value='ok'>Stale</label>
+<label><input type='checkbox' name='descending' value='true'>Descending</label>
+</fieldset>
+<fieldset>
+<legend>Windowing</legend>
+<label><input type='text' name='limit' value=''>Limit</label>
+<label><input type='text' name='skip' value=''>Skip</label>
+</fieldset>
+<fieldset>
+<legend>Grouping</legend>
+<label><input type='checkbox' name='group' value='true'>Group</label>
+<label><input type='text' name='group_level' value=''>Group Level</label>
+</fieldset>
+<fieldset>
+<legend>Key Specs</legend>
+<label><input type='text' name='key' value=''>Key</label>
+<label><input type='text' name='startkey' value=''>Start Key</label>
+<label><input type='text' name='startkey_docid' value=''>Start Key DocID</label>
+<label><input type='text' name='endkey' value=''>End Key</label>
+<label><input type='text' name='endkey_docid' value=''>End Key DocID</label>
+</fieldset>
+<input type='submit'>
+</form>
+<!--split-->
+<pre class='prettyprint lang-json'>
+<%=json%>
+</pre>
+<!--split-->
+<script>
+$(function(){
+    // set all values to anything found in qvars
+    var qv = getQueryVars();
+    for(v in qv){
+        var jqo = $('[name='+v+']');
+        if(jqo.length===1){
+            if(jqo.attr('type')==='checkbox'){
+                jqo.attr('checked', true);
+            }
+            if(jqo.attr('type')==='text'){
+                // keys are JSON strings that need to be parsed
+                if(v.slice(v.length-3)==='key'){
+                    jqo.attr('value', JSON.parse(unescape(qv[v])));
+                }else{
+                    jqo.attr('value', qv[v]);
+                }
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>
