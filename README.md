@@ -1,7 +1,7 @@
 This is a couchapp vendor for a single \_list that explores views.  
  
 ### Requirements
-- CouchDB 0.9
+- CouchDB 0.9  
 The lists functionality of CouchDB is still evolving and subject to change. This project only supports the current stable, 0.9 series.
 
 - Couchapp
